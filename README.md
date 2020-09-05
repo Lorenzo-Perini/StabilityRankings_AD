@@ -55,4 +55,4 @@ Contact the author of the paper: [lorenzo.perini@kuleuven.be](mailto:lorenzo.per
 
 ## References
 
-[1] Perini, L., Galvin, C., Vercruyssen, V.: *A Ranking Stability Measure for Quantifyingthe Robustness of Anomaly Detection Methods.* In: 2nd Workshop on Evaluation and Experimental Design in Data Mining and Machine Learning @ ECML/PKDD (2020).
+[1] Perini, L., Galvin, C., Vercruyssen, V.: *A Ranking Stability Measure for Quantifying the Robustness of Anomaly Detection Methods.* In: 2nd Workshop on Evaluation and Experimental Design in Data Mining and Machine Learning @ ECML/PKDD (2020).
