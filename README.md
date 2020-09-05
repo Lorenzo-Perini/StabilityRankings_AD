@@ -28,16 +28,16 @@ from pyod.models.knn import KNN
 from stability import *
 
 # Estimate the contamination factor (which has to be given), for instance with
-contamination = sum(y)/len(y)       # where y is the label vector (1 for anomaly, 0 for normal );
+gamma = sum(y)/len(y)      # where y is the label vector (1 for anomaly, 0 for normal);
 
 # Build an anomaly detector h (for instance, here we use kNNO)
-h = KNN(n_neighbors=5, contamination=contamination)
+knno = KNN(n_neighbors = 5, contamination = gamma)
 
 # Compute the ranking stability measure under UNIFORM sampling:
-unif_stability, unif_instability = stability_measure(Xtr, Xte, h, contamination, unif = True)
+knno_stab_unif, knno_inst_unif = stability_measure(Xtr, Xte, knno, gamma, unif = True)
 
 # Compute the ranking stability measure under BIAS sampling:
-bias_stability, bias_instability = stability_measure(Xtr, Xte, h, contamination, unif = False)
+knno_stab_bias, knno_inst_bias = stability_measure(Xtr, Xte, knno, gamma, unif = False)
 ```
 
 ## Dependencies

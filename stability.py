@@ -10,7 +10,7 @@ from pyod.models.lof import LOF
 from pyod.models.iforest import IForest
 import pandas as pd
 
-def stability_measure(Xtr, Xte, model, c,
+def stability_measure(Xtr, Xte, model, gamma,
         unif = True,            # pick True or False
         iterations=500,
         psi = 0.8,
@@ -25,7 +25,7 @@ def stability_measure(Xtr, Xte, model, c,
     Xtr                 : np.array of shape (n_samples,n_features) containing the training set;
     Xte                 : np.array of shape (m_samples,n_features) containing the test set;
     model               : object containing the anomaly detector;
-    c                   : float containing the contamination factor, i.e. the expected proportion of anomalies;
+    gamma               : float containing the contamination factor, i.e. the expected proportion of anomalies;
     unif                : bool selecting the case to exploit: If True, uniform sampling is selected, if False, biased sampling is used;
     iterations          : int regarding the number of iterations;
     psi                 : float in [0, 1], the hyperparameter controlling the shape of the beta distribution;
@@ -52,7 +52,7 @@ def stability_measure(Xtr, Xte, model, c,
         weights = np.ones(ntr) * (1 / ntr)
 
     if psi == 0:
-        psi = max(0.51, 1 - (c + 0.05))
+        psi = max(0.51, 1 - (gamma + 0.05))
     
     # sample weights
     norm = np.ones(ntr) * (1 / ntr)
@@ -86,20 +86,20 @@ def stability_measure(Xtr, Xte, model, c,
 
     if beta_flavor == 1:
         # The area of the Beta distribution is the same in the intervals [0, psi] and [psi, 1]
-        beta_param = float((1/(psi + c -1))*(2*c -1 - c/3 + psi*((3 - 4*c)/3)))
-        alpha_param = float(beta_param*((1-c)/c) + (2*c -1)/c)
+        beta_param = float((1/(psi + gamma -1))*(2*gamma -1 - gamma/3 + psi*((3 - 4*gamma)/3)))
+        alpha_param = float(beta_param*((1-gamma)/gamma) + (2*gamma -1)/gamma)
         
     elif beta_flavor == 2:
         # the width of the beta distribution is set such that psi percent of the mass
-        # of the distribution falls in the region [1 - 2 * c , 1]
+        # of the distribution falls in the region [1 - 2 * gamma , 1]
         
         # optimization function
         def f(p):
-            return ((1.0 - psi) - beta.cdf(1.0 - 2 * c, p[0], p[1])) ** 2
+            return ((1.0 - psi) - beta.cdf(1.0 - 2 * gamma, p[0], p[1])) ** 2
         # bounds
         bounds = Bounds([1.0, 1.0], [np.inf, np.inf])
         # linear constraint
-        linear_constraint = LinearConstraint([[c, c - 1.0]], [2*c - 1.0], [2*c - 1.0])
+        linear_constraint = LinearConstraint([[gamma, gamma - 1.0]], [2*gamma - 1.0], [2*gamma - 1.0])
         # optimize
         p0 = np.array([1.0, 1.0])
         res = minimize(f, p0, method='trust-constr', constraints=[linear_constraint], options={'verbose': 0}, bounds=bounds)
